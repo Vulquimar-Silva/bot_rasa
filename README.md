@@ -1,7 +1,7 @@
 
 # Rasa Training Project
 
-Este projeto foi configurado para fornecer um ambiente completo de desenvolvimento e treinamento para um chatbot utilizando **Rasa**, **Docker** e uma estrutura de arquivos de configuração bem definida. O objetivo é proporcionar uma experiência consistente e documentada para desenvolvedores que trabalham com a ferramenta Rasa.
+Este README foi desenvolvido para orientar desenvolvedores que estão trabalhando com a ferramenta Rasa pela primeira vez. Ele abrange todos os passos desde a configuração inicial, passando pelo treinamento e execução do bot, até a definição de ações personalizadas.
 
 ---
 
@@ -32,8 +32,6 @@ O Rasa é uma plataforma de código aberto para construir chatbots e assistentes
 └── requirements.txt          # Lista de dependências Python para o projeto
 ```
 
-> **Nota**: Adicione ou ajuste arquivos conforme a evolução do projeto.
-
 ## Pré-requisitos
 
 1. **Python**: Certifique-se de estar usando **Python 3.8**. Versões superiores podem causar incompatibilidades com as dependências do projeto.
@@ -43,15 +41,17 @@ O Rasa é uma plataforma de código aberto para construir chatbots e assistentes
 
 ## Banco de Dados
 
-O projeto utiliza o **PostgreSQL** como banco de dados para armazenamento do tracker (rastreamento de conversas e sessões). A conexão com o banco de dados é configurada no arquivo `endpoints.yml` e utiliza variáveis de ambiente no `docker-compose.yml` para facilitar a configuração. É possível adaptar para outros bancos SQL se necessário, desde que sejam feitas as devidas configurações.
+O projeto utiliza o **PostgreSQL** como banco de dados para armazenamento do tracker (rastreamento de conversas e sessões). A conexão com o banco de dados é configurada no arquivo `endpoints.yml` e utiliza variáveis de ambiente no `docker-compose.yml` para facilitar a configuração. É possível adaptar para outros bancos SQL e NOSQL se necessário, desde que sejam feitas as devidas configurações.
 
-### Configuração do Banco de Dados
+### Configuração do Banco de Dados no `docker-compose.yml`
 
-- **Serviço**: `postgres`
-- **Usuário**: `rasa_training`
-- **Senha**: `L8Rasa2024`
-- **Banco de Dados**: `rasa_db`
-- **Porta**: 5432 (padrão PostgreSQL)
+```yaml
+- `DB_HOST`: Configurado como `postgres` (nome do serviço do banco)
+- `DB_PORT`: Porta do banco de dados, definida como `5432`
+- `DB_USER`: Usuário do banco (`rasa_training`)
+- `DB_PASSWORD`: Senha do banco (`L8Rasa2024`)
+- `DB_DATABASE`: Nome do banco de dados (`rasa_db`)
+```
 
 ### Configurações do PostgreSQL no `endpoints.yml`
 
@@ -103,18 +103,6 @@ Quando você inicia o projeto, três serviços são criados automaticamente pelo
    docker-compose exec rasa rasa shell
    ```
 
-## Variáveis de Ambiente
-
-As variáveis de ambiente utilizadas para configuração do banco de dados estão no `docker-compose.yml`. Aqui estão as principais:
-
-- `DB_HOST`: Configurado como `postgres` (nome do serviço do banco)
-- `DB_PORT`: Porta do banco de dados, definida como `5432`
-- `DB_USER`: Usuário do banco (`rasa_training`)
-- `DB_PASSWORD`: Senha do banco (`L8Rasa2024`)
-- `DB_DATABASE`: Nome do banco de dados (`rasa_db`)
-
-Essas variáveis facilitam o gerenciamento de credenciais e podem ser alteradas conforme necessário.
-
 ## Configuração de Ações Personalizadas
 
 O diretório `actions/` contém o arquivo `actions.py`, onde você pode definir ações personalizadas para o bot. Ações personalizadas permitem que o bot execute código Python para responder a intenções específicas ou realizar operações complexas, como interagir com APIs externas ou acessar bancos de dados.
@@ -141,14 +129,66 @@ Após definir as ações personalizadas, certifique-se de listar `action_example
 ## Estrutura dos Arquivos Principais
 
 - **domain.yml**: Define as intents, respostas, ações e entidades do bot.
+
+  ```yaml
+  intents:
+    - greet
+    - goodbye
+  responses:
+    utter_greet:
+      - text: "Olá! Como posso ajudar?"
+  ```
+
 - **nlu.yml**: Contém exemplos de intenções e entidades para o modelo de NLU.
+
+  ```yaml
+  version: "3.1"
+  nlu:
+    - intent: greet
+      examples: |
+        - olá
+        - oi
+        - bom dia
+  ```
+
 - **rule.yml**: Define regras específicas para respostas automáticas.
+
+  ```yaml
+  version: "3.1"
+  rules:
+    - rule: Responder a um cumprimento
+      steps:
+        - intent: greet
+        - action: utter_greet
+  ```
+
 - **story.yml**: Histórias que treinam o bot em diálogos mais complexos.
+
+  ```yaml
+  version: "3.1"
+  stories:
+    - story: saudação
+      steps:
+        - intent: greet
+        - action: utter_greet
+  ```
+
 - **config.yml**: Configura o pipeline de processamento e políticas do modelo.
+
+  ```yaml
+  language: "pt"
+  pipeline:
+    - name: "WhitespaceTokenizer"
+    - name: "CountVectorsFeaturizer"
+    - name: "DIETClassifier"
+  policies:
+    - name: "MemoizationPolicy"
+  ```
+
 - **endpoints.yml**: Configura os endpoints do projeto, incluindo o servidor de ações.
 
-## Considerações Finais
+## Documentação Adicional
 
-Este README foi desenvolvido para orientar desenvolvedores que estão trabalhando com a ferramenta Rasa pela primeira vez. Ele abrange todos os passos desde a configuração inicial, passando pelo treinamento e execução do bot, até a definição de ações personalizadas. O objetivo é minimizar a necessidade de consulta à documentação externa, proporcionando um guia completo para o entendimento e utilização do projeto.
+Para mais detalhes sobre as funcionalidades avançadas do Rasa, consulte a [Documentação Oficial do Rasa](https://rasa.com/docs/rasa).
 
 ---

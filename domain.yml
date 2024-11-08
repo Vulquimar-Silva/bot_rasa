@@ -1,8 +1,8 @@
 version: "3.1"
 
 intents:
-  
-  - goodbye- greet
+  - greet
+  - goodbye
   - mood_unhappy
   - affirm
   - deny
@@ -15,7 +15,7 @@ responses:
   utter_cheer_up:
     - text: "Não fique triste! Estou aqui para te ajudar. 😊"
     - text: "Lembre-se, dias melhores virão!"
-    - text: "É complicado, pois coisas difíceis não são faceis!"
+    - text: "É complicado, pois coisas difíceis não são fáceis!"
 
   utter_affirm:
     - text: "Ótimo, obrigado por confirmar!"
