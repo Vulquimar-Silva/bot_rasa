@@ -1,0 +1,32 @@
+version: "3.1"
+
+rules:
+  - rule: Responder a um cumprimento com ação personalizada
+    steps:
+      - intent: greet
+      - action: action_say_hello
+
+  - rule: Responder a um adeus
+    steps:
+      - intent: goodbye
+      - action: utter_goodbye
+
+  - rule: Animar o usuário quando estiver triste
+    steps:
+      - intent: mood_unhappy
+      - action: utter_cheer_up
+
+  - rule: Responder afirmativamente
+    steps:
+      - intent: affirm
+      - action: utter_affirm
+
+  - rule: Responder negativamente
+    steps:
+      - intent: deny
+      - action: utter_deny
+
+  - rule: Perguntar algo ao bot
+    steps:
+      - intent: ask_question
+      - action: utter_ask_question

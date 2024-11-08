@@ -1,0 +1,12 @@
+tracker_store:
+  type: SQL
+  dialect: "postgresql"
+  url: ${DB_HOST}         # Nome do serviço PostgreSQL (deve ser configurado como "postgres")
+  port: ${DB_PORT}        # Porta do PostgreSQL (deve ser 5432)
+  username: ${DB_USER}    # Usuário do banco de dados (deve ser "rasa_training")
+  password: ${DB_PASSWORD}  # Senha do banco de dados (deve ser "L8Rasa2024")
+  db: ${DB_DATABASE}      # Nome do banco de dados (deve ser "rasa_db")
+  login_db: "postgres"    # Banco de login padrão para PostgreSQL
+
+action_endpoint:
+  url: "http://action_server:5055/webhook" # Endpoint para o servidor de actions personalizadas

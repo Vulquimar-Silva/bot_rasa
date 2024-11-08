@@ -1,0 +1,51 @@
+services:
+  rasa:
+    build: .
+    command: ["run", "--enable-api", "--cors", "*", "--port", "5006", "--endpoints", "endpoints.yml"]
+    ports:
+      - "5006:5006"
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=rasa_training
+      - DB_PASSWORD=L8Rasa2024
+      - DB_DATABASE=rasa_db
+      - SQLALCHEMY_WARN_20=1
+      - SQLALCHEMY_SILENCE_UBER_WARNING=1
+    volumes:
+      - ./models:/app/models
+      - ./data/nlu.yml:/app/data/nlu.yml
+      - ./data/story.yml:/app/data/story.yml
+      - ./data/rule.yml:/app/data/rule.yml
+      - ./domain.yml:/app/domain.yml
+    depends_on:
+      - postgres
+      - action_server
+    networks:
+      - rasa_network
+
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: rasa_training
+      POSTGRES_PASSWORD: L8Rasa2024
+      POSTGRES_DB: rasa_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - rasa_network
+
+  action_server:
+    image: rasa/rasa-sdk:3.6.0
+    volumes:
+      - ./actions:/app/actions
+    ports:
+      - "5055:5055"
+    networks:
+      - rasa_network
+
+volumes:
+  postgres_data:
+
+networks:
+  rasa_network:

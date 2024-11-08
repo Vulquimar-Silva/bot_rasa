@@ -1,0 +1,35 @@
+version: "3.1"
+
+intents:
+  
+  - goodbye- greet
+  - mood_unhappy
+  - affirm
+  - deny
+  - ask_question
+
+responses:
+  utter_goodbye:
+    - text: "Até mais! Tenha um ótimo dia."
+
+  utter_cheer_up:
+    - text: "Não fique triste! Estou aqui para te ajudar. 😊"
+    - text: "Lembre-se, dias melhores virão!"
+    - text: "É complicado, pois coisas difíceis não são faceis!"
+
+  utter_affirm:
+    - text: "Ótimo, obrigado por confirmar!"
+
+  utter_deny:
+    - text: "Entendo. Se precisar de algo, estarei aqui."
+
+  utter_ask_question:
+    - text: "Por favor, qual é sua dúvida?"
+
+actions:
+  - utter_goodbye
+  - utter_cheer_up
+  - utter_affirm
+  - utter_deny
+  - utter_ask_question
+  - action_say_hello

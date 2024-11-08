@@ -1,0 +1,52 @@
+version: "3.1"
+
+nlu:
+  - intent: greet
+    examples: |
+      - olá
+      - ola
+      - oi
+      - bom dia
+      - boa tarde
+      - boa noite
+      - e aí
+      - olá, tudo bem?
+
+  - intent: goodbye
+    examples: |
+      - tchau
+      - até logo
+      - adeus
+      - até mais
+      - até breve
+
+  - intent: mood_unhappy
+    examples: |
+      - estou triste
+      - me sinto triste
+      - não estou bem
+      - estou deprimido
+      - sinto-me infeliz
+
+  - intent: affirm
+    examples: |
+      - sim
+      - claro
+      - com certeza
+      - isso mesmo
+      - exatamente
+
+  - intent: deny
+    examples: |
+      - não
+      - negativo
+      - de forma alguma
+      - nem pensar
+
+  - intent: ask_question
+    examples: |
+      - posso fazer uma pergunta?
+      - gostaria de saber
+      - tenho uma dúvida
+      - você pode me ajudar?
+      - queria perguntar
