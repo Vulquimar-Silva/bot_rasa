@@ -187,6 +187,118 @@ Após definir as ações personalizadas, certifique-se de listar `action_example
 
 - **endpoints.yml**: Configura os endpoints do projeto, incluindo o servidor de ações.
 
+## Consumindo a API do Rasa
+
+O Rasa oferece uma API HTTP REST que permite interagir com o chatbot de maneira programática, possibilitando o envio de mensagens, gerenciamento de sessões e rastreamento de eventos de conversa. Abaixo estão as instruções detalhadas para o consumo da API, com exemplos práticos e profissionais.
+
+### Endereço da API
+
+Por padrão, a API do Rasa estará disponível em `http://localhost:5006` quando o contêiner Docker estiver em execução, conforme configurado no `docker-compose.yml`.
+
+### Endpoints Principais
+
+1. **Enviar Mensagens para o Chatbot**
+
+   Este endpoint permite o envio de mensagens ao chatbot para obter respostas em tempo real, sendo ideal para testes de fluxo de conversação.
+
+   - **Método**: `POST`
+   - **Endpoint**: `/webhooks/rest/webhook`
+   - **Exemplo de Requisição**:
+
+     ```json
+     {
+       "sender": "usuario_123",
+       "message": "Oi, tudo bem?"
+     }
+     ```
+
+   - **Exemplo de Resposta**:
+
+     ```json
+     [
+       {
+         "recipient_id": "usuario_123",
+         "text": "Olá! Como posso ajudar?"
+       }
+     ]
+     ```
+
+2. **Obter o Histórico de Conversas**
+
+   Esse endpoint permite a recuperação do histórico completo de conversas de um usuário específico, permitindo o rastreamento dos eventos de interação.
+
+   - **Método**: `GET`
+   - **Endpoint**: `/conversations/<sender_id>/tracker`
+   - **Exemplo de URL Completa**: `http://localhost:5006/conversations/usuario_123/tracker`
+   - **Uso**: Substitua `<sender_id>` pelo identificador único do usuário.
+
+3. **Resetar a Conversa**
+
+   Este endpoint redefine o histórico de conversas de um usuário específico, limpando o estado atual entre sessões de interação.
+
+   - **Método**: `POST`
+   - **Endpoint**: `/conversations/<sender_id>/tracker/events`
+   - **Corpo da Requisição**:
+
+     ```json
+     {
+       "event": "restart"
+     }
+     ```
+
+4. **Servidor de Ações Personalizadas**
+
+   O servidor de ações personalizadas permite que o chatbot execute código adicional para responder a intenções específicas ou realizar operações complexas. Abaixo estão as instruções para configurar e acessar o servidor de ações em dois contextos: localmente e no Docker.
+
+   #### Acesso Local (Fora do Docker)
+
+   Quando o projeto é executado localmente, o servidor de actions é acessível em `http://localhost:5055/webhook`.
+
+   - **URL do Servidor de Ações**: `http://localhost:5055/webhook`
+   - **Uso**: Esse endpoint é usado internamente pelo Rasa para executar ações personalizadas definidas no arquivo `actions.py`. Geralmente, você não precisa interagir diretamente com o servidor de actions via API REST, pois ele é chamado automaticamente durante as interações do chatbot.
+
+   #### Acesso no Docker (Comunicação entre Contêineres)
+
+   No contexto do Docker, o serviço de actions é configurado para ser acessível pelo nome do serviço no `docker-compose.yml`, que geralmente é `action_server`. Isso permite a comunicação entre o contêiner do Rasa e o servidor de actions.
+
+   - **URL do Servidor de Ações no Docker**: `http://action_server:5055/webhook`
+   - **Uso**: Dentro do contêiner do Rasa, configure o endpoint do servidor de actions como `http://action_server:5055/webhook` no arquivo `endpoints.yml`. Esse endereço usa o nome do serviço configurado no `docker-compose.yml`, permitindo que o Rasa se conecte ao servidor de actions sem necessidade de um endereço de rede externo.
+
+   - **Exemplo de Configuração no `endpoints.yml`**:
+
+     ```yaml
+     action_endpoint:
+       url: "http://action_server:5055/webhook"
+     ```
+
+   Essa configuração garante que o contêiner do Rasa possa se comunicar com o servidor de actions usando o nome do serviço `action_server`, evitando problemas de rede no ambiente Docker.
+
+### Exemplo de Consumo da API Usando `curl`
+
+Aqui estão exemplos de comandos `curl` para interagir com a API do Rasa:
+
+```bash
+# Enviar uma mensagem para o chatbot
+curl -X POST http://localhost:5006/webhooks/rest/webhook      -H "Content-Type: application/json"      -d '{"sender": "usuario_123", "message": "Oi, tudo bem?"}'
+
+# Obter o histórico de conversa
+curl -X GET http://localhost:5006/conversations/usuario_123/tracker
+
+# Resetar a conversa
+curl -X POST http://localhost:5006/conversations/usuario_123/tracker/events      -H "Content-Type: application/json"      -d '{"event": "restart"}'
+```
+
+### Consumindo a API com Postman
+
+Para uma experiência mais amigável, recomendamos o uso do **Postman** para consumir a API:
+
+1. **Configurar a URL Base**: Defina `http://localhost:5006` como URL base no Postman.
+2. **Enviar Mensagens**: Crie uma requisição `POST` para o endpoint `/webhooks/rest/webhook`, configure o corpo com o JSON conforme o exemplo e envie a mensagem para o chatbot.
+3. **Recuperar Histórico de Conversas**: Crie uma requisição `GET` para o endpoint `/conversations/<sender_id>/tracker` para obter o histórico completo de interação de um usuário.
+4. **Resetar Conversa**: Crie uma requisição `POST` para `/conversations/<sender_id>/tracker/events`, com o corpo contendo o evento de `restart` para limpar o estado da conversa.
+
+---
+
 ## Documentação Adicional
 
 Para mais detalhes sobre as funcionalidades avançadas do Rasa, consulte a [Documentação Oficial do Rasa](https://rasa.com/docs/rasa).
